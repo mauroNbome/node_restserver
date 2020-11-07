@@ -1,43 +1,30 @@
-const express = require("express");
-const app = express();
 require("./config/config");
 
+const express = require("express");
+const mongoose = require("mongoose");
+
 const bodyParser = require("body-parser");
+
+const app = express();
+
+//REMEMBER ^^ That's the order that you should use, otherwise throw an error.
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-
 // parse application/json
 app.use(bodyParser.json());
 
-app.get("/usuario", function (req, res) {
-  res.json("get_usuario");
-});
+app.use(require("./routes/usuario"));
 
-app.post("/usuario", function (req, res) {
-  // Using body-parser
-  let body = req.body;
+mongoose.connect(
+  process.env.URLDB,
+  { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
+  (err, res) => {
+    if (err) throw err;
 
-  if (body.nombre === undefined) {
-    res.status(400).json({
-      ok: false,
-      message: "name is required",
-    });
-  } else {
-    res.json({
-      user: body,
-    });
+    console.log("BD ONLINE");
   }
-});
-
-app.put("/usuario/:id", function (req, res) {
-  let id = req.params.id;
-
-  res.json(`put_usuario ${id}`);
-});
-
-app.delete("/usuario", function (req, res) {
-  res.json("delete_usuario");
-});
+);
 
 app.listen(process.env.PORT, () =>
   console.log("Escuchando el puerto: ", process.env.PORT)
