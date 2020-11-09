@@ -4,10 +4,20 @@ const bcrypt = require("bcrypt");
 const _ = require("underscore");
 
 const Usuario = require("../models/usuario");
+const {
+  verificaToken,
+  verificaAdmin_role,
+} = require("../middlewares/autenticacion");
 
 const app = express();
 
-app.get("/usuario", function (req, res) {
+//verificaToken es nuestro middleware que toma el token del header de un API request.
+
+app.get("/usuario", verificaToken, (req, res) => {
+  // ||| Así obtenemos el payload del token.
+  // return res.json({
+  //   usuario: req.usuario,
+  // });
   let desde = req.query.desde || 0;
   desde = Number(desde); // it's an string as default.
 
@@ -36,7 +46,7 @@ app.get("/usuario", function (req, res) {
     });
 });
 
-app.post("/usuario", function (req, res) {
+app.post("/usuario", [verificaToken, verificaAdmin_role], (req, res) => {
   // Using body-parser
   let body = req.body;
 
@@ -68,8 +78,10 @@ app.post("/usuario", function (req, res) {
 
 // pick = Return a copy of the object, filtered to only have values for the allowed keys.
 // Con esto no dejamos que nadie utilice los valores que no estan explicitos.
-app.put("/usuario/:id", function (req, res) {
+app.put("/usuario/:id", [verificaToken, verificaAdmin_role], (req, res) => {
   let id = req.params.id;
+
+  // Datos modificables. (omitimos google)
   let body = _.pick(req.body, ["nombre", "email", "img", "role", "estado"]);
 
   // { new: true } <-- Esto nos retorna el nuevo objeto, si es false retorna el anterior.
@@ -97,7 +109,7 @@ app.put("/usuario/:id", function (req, res) {
 });
 
 // Instead of deleting an user, we're setting the state to false.
-app.delete("/usuario/:id", function (req, res) {
+app.delete("/usuario/:id", [verificaToken, verificaAdmin_role], (req, res) => {
   let id = req.params.id;
   let setStatusToFalse = {
     estado: false,

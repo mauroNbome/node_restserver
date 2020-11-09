@@ -44,6 +44,8 @@ let usuarioSchema = new Schema({
 
 // Este método toJSON se llama cuando se intenta imprimir.
 // NO utilzar arrow function.
+
+// Usamos esto para que la password no aparezca en request.
 usuarioSchema.methods.toJSON = function () {
   let user = this;
   let userObject = user.toObject();
