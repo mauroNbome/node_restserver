@@ -35,3 +35,10 @@ if (process.env.NODE_ENV === "dev") {
 }
 
 process.env.URLDB = urlDB;
+
+// ======================================
+//  SEED de autenticación
+// ======================================
+process.env.CLIENT_ID =
+  process.env.CLIENT_ID ||
+  "430713086882-op3lmckoqie4e9srrgg7vpo9n4d7gh6n.apps.googleusercontent.com";
