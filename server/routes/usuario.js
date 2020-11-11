@@ -46,7 +46,7 @@ app.get("/usuario", verificaToken, (req, res) => {
     });
 });
 
-app.post("/usuario", [verificaToken, verificaAdmin_role], (req, res) => {
+app.post("/usuario", verificaToken, (req, res) => {
   // Using body-parser
   let body = req.body;
 
@@ -90,7 +90,6 @@ app.put("/usuario/:id", [verificaToken, verificaAdmin_role], (req, res) => {
   Usuario.findByIdAndUpdate(
     id,
     body,
-
     { new: true, runValidators: true },
     (err, usuarioBD) => {
       if (err) {
